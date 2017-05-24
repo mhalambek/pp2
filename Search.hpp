@@ -2,6 +2,7 @@
 
 #include "Board.hpp"
 #include "Move.hpp"
+#include "timer.hpp"
 #include <iostream>
 #include <map>
 
@@ -156,6 +157,9 @@ struct Search {
       }
     }
 
+    Timer t, fetchTimer;
+    t.start();
+    fetchTimer.start();
     for (auto batch : order) {
       if (batch.first == 0) {
         continue;
@@ -176,18 +180,8 @@ struct Search {
           score[task.moves[0].position].second = res.second;
         }
       }
-      // for (auto& task : batch.second) {
-      //   pair<int, int> res;
-      //   if (score.count(task.moves[0].position)) {
-      //     auto& a = score[task.moves[0].position];
-      //     a.first += res.first;
-      //     a.second += res.second;
-      //   } else {
-      //     score[task.moves[0].position].first = res.first;
-      //     score[task.moves[0].position].second = res.second;
-      //   }
-      // }
     }
+    cout << "fetchTimer: " << fetchTimer.diffMilliseconds() << endl;
 
     map<int, float> ratio;
 
@@ -195,18 +189,14 @@ struct Search {
 
     float maxValue = -2;
     for (auto s : score) {
-      // cout << s.first << endl;
       ratio[s.first] = (float)s.second.first / s.second.second;
 
-      // cout << "score: " << s.second.first << endl;
-      // cout << "stateCount: " << s.second.second << endl;
-      // cout << "move: " << s.first << endl;
-      // cout << "ratio: " << ratio[s.first] << endl;
       if (ratio[s.first] > maxValue) {
         maxValue = ratio[s.first];
         ret = s.first;
       }
     }
+    cout << "reduce all results: " << t.diffMilliseconds() << endl;
 
     return ret;
   }

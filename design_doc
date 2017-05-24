@@ -1,0 +1,25 @@
+mini pseudocode igre
+init board
+
+while game not done(win/lose/tie):
+  1:  COM calc move
+  2:  COM make move
+  3:  HUMAN input move
+  4:  HUMAN make move
+
+  end_game:
+
+  1.podjela:
+
+  1.1 podjela podataka:
+  stanje boarda-a, stanje ploce, tko je sljedeci na potezu
+
+  podjela racunanja (functional decomposition):
+    search through "all available" moves(brute force), actually limited DFS
+    end:
+
+komunikacija:
+sync board state
+algomeracija:
+
+pridruzivanje:

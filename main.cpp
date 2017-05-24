@@ -137,8 +137,8 @@ int main(int argc, char** argv)
 
       auto move = Move::getMove();
 
-      cout << "slave wait COM" << endl;
-      cout << "move: " << move << endl;
+      // cout << "slave wait COM" << endl;
+      // cout << "move: " << move << endl;
       b.move(move.position, move.player);
 
       int gameOver = 0;
@@ -148,9 +148,9 @@ int main(int argc, char** argv)
         break;
       }
 
-      cout << "slave wait HUMAN" << endl;
+      // cout << "slave wait HUMAN" << endl;
       move = Move::getMove();
-      cout << "move: " << move << endl;
+      // cout << "move: " << move << endl;
       b.move(move.position, move.player);
 
       MPI_Bcast(&gameOver, 1, MPI_INT, rank, MPI_COMM_WORLD);
