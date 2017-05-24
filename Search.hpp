@@ -207,7 +207,7 @@ struct Search {
     auto valid = b.getValidMoves();
     vector<SearchTask> ret;
 
-    if (false || valid.size() >= poolSize) {
+    if (false && valid.size() >= poolSize) {
       for (int m : valid) {
         ret.push_back(SearchTask(depth, vector<Move>({ Move(b.turn, m) })));
       }
