@@ -130,9 +130,10 @@ int main(int argc, char** argv)
         result.push_back(pair<int, int>(res, stateCount));
       }
 
-      for (auto r : result) {
-        MPI_Send(&r.first, 2, MPI_INT, 0, 0, MPI_COMM_WORLD);
-      }
+      MPI_Send(&result[0].first, 2 * result.size(), MPI_INT, 0, 0, MPI_COMM_WORLD);
+      // for (auto r : result) {
+      //   MPI_Send(&r.first, 2, MPI_INT, 0, 0, MPI_COMM_WORLD);
+      // }
 
       auto move = Move::getMove();
 

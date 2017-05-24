@@ -93,8 +93,8 @@ struct Search {
 
     for (auto move : moveQuality) {
 
-      cout << "move: " << move.first << endl;
-      cout << "ratio: " << move.second << endl;
+      // cout << "move: " << move.first << endl;
+      // cout << "ratio: " << move.second << endl;
 
       if (move.second > bestValue) {
         bestValue = move.second;
@@ -108,7 +108,7 @@ struct Search {
   static int getBestMoveMPI(unsigned int poolSize, int depth, Board& b)
   {
     auto tasks = generateTasks(poolSize, depth, b);
-    cout << "task count: " << tasks.size() << endl;
+    // cout << "task count: " << tasks.size() << endl;
     //send tasks, process some yourself
 
     map<int, vector<SearchTask> > order;
@@ -160,9 +160,13 @@ struct Search {
       if (batch.first == 0) {
         continue;
       }
-      for (auto& task : batch.second) {
-        pair<int, int> res;
-        MPI_Recv(&res.first, 2, MPI_INT, batch.first, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      vector<pair<int, int> > results(batch.second.size());
+
+      MPI_Recv(&results[0].first, 2 * batch.second.size(), MPI_INT, batch.first, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+      for (unsigned int i = 0; i < batch.second.size(); ++i) {
+        auto& task = batch.second[i];
+        auto& res = results[i];
         if (score.count(task.moves[0].position)) {
           auto& a = score[task.moves[0].position];
           a.first += res.first;
@@ -172,6 +176,17 @@ struct Search {
           score[task.moves[0].position].second = res.second;
         }
       }
+      // for (auto& task : batch.second) {
+      //   pair<int, int> res;
+      //   if (score.count(task.moves[0].position)) {
+      //     auto& a = score[task.moves[0].position];
+      //     a.first += res.first;
+      //     a.second += res.second;
+      //   } else {
+      //     score[task.moves[0].position].first = res.first;
+      //     score[task.moves[0].position].second = res.second;
+      //   }
+      // }
     }
 
     map<int, float> ratio;
@@ -180,13 +195,13 @@ struct Search {
 
     float maxValue = -2;
     for (auto s : score) {
-      cout << s.first << endl;
+      // cout << s.first << endl;
       ratio[s.first] = (float)s.second.first / s.second.second;
 
-      cout << "score: " << s.second.first << endl;
-      cout << "stateCount: " << s.second.second << endl;
-      cout << "move: " << s.first << endl;
-      cout << "ratio: " << ratio[s.first] << endl;
+      // cout << "score: " << s.second.first << endl;
+      // cout << "stateCount: " << s.second.second << endl;
+      // cout << "move: " << s.first << endl;
+      // cout << "ratio: " << ratio[s.first] << endl;
       if (ratio[s.first] > maxValue) {
         maxValue = ratio[s.first];
         ret = s.first;
@@ -201,7 +216,7 @@ struct Search {
     auto valid = b.getValidMoves();
     vector<SearchTask> ret;
 
-    if (valid.size() > poolSize) {
+    if (valid.size() >= poolSize) {
       for (int m : valid) {
         ret.push_back(SearchTask(depth, vector<Move>({ Move(b.turn, m) })));
       }
