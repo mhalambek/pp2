@@ -128,8 +128,9 @@ struct Search {
       if (batch.first == 0) {
         continue;
       }
+      int maxDepth = order.begin()->second.begin()->depth;
       //send depth
-      MPI_Send(&depth, 1, MPI_INT, batch.first, 0, MPI_COMM_WORLD);
+      MPI_Send(&maxDepth, 1, MPI_INT, batch.first, 0, MPI_COMM_WORLD);
       //send task count
       int tasksCount = batch.second.size();
       MPI_Send(&tasksCount, 1, MPI_INT, batch.first, 0, MPI_COMM_WORLD);
