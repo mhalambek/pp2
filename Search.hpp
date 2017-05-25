@@ -222,6 +222,7 @@ struct Search {
         //generate next level tasks
         for (auto& m : ba.getValidMoves()) {
           SearchTask t(task);
+          t.depth = depth;
           t.moves.push_back(Move(ba.turn, m));
           expandee.push_back(t);
         }
