@@ -14,7 +14,7 @@ struct SearchTask {
 
   SearchTask() {}
 
-  SearchTask(int depth, vector<Move> moves)
+  SearchTask(int depth, const vector<Move> moves)
       : depth{ depth }
       , moves{ moves }
   {
@@ -206,6 +206,31 @@ struct Search {
   {
     auto valid = b.getValidMoves();
     vector<SearchTask> ret;
+
+    ret.push_back(SearchTask(depth, vector<Move>()));
+
+    while (ret.size() < poolSize * 10 && --depth > 0) {
+      vector<SearchTask> expandee;
+      for (auto& task : ret) {
+
+        //get board into state described in task
+        Board ba(b);
+        for (auto& m : task.moves) {
+          ba.move(m.position, m.player);
+        }
+
+        //generate next level tasks
+        for (auto& m : ba.getValidMoves()) {
+          SearchTask t(task);
+          t.moves.push_back(Move(ba.turn, m));
+          expandee.push_back(t);
+        }
+      }
+
+      ret = expandee;
+    }
+
+    return ret;
 
     if (false && valid.size() >= poolSize) {
       for (int m : valid) {

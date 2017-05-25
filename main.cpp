@@ -55,7 +55,7 @@ int main(int argc, char** argv)
   map<int, float> moveQuality;
   if (rank == 0) {
 
-    while (!b.won() && !b.lost()) {
+    while (!b.won() && !b.lost() && b.getValidMoves().size() > 0) {
       auto validMoves = b.getValidMoves();
       // Search s(maxDepth, rank, poolSize);
       Timer t;
@@ -69,6 +69,10 @@ int main(int argc, char** argv)
 
       Move::broadcastMove(b.turn, maxIndex);
       b.move(maxIndex, b.turn);
+
+      if (b.getValidMoves().size() == 0) {
+        break;
+      }
 
       cout << b << endl;
 
@@ -104,7 +108,13 @@ int main(int argc, char** argv)
     } else if (b.lost()) {
       cout << "you won" << endl;
     } else {
-      cout << "this is embarassing" << endl;
+      if (b.getValidMoves().size() == 0) {
+
+        cout << "it's a tie" << endl;
+      } else {
+
+        cout << "this is embarassing" << endl;
+      }
     }
 
   } else {
